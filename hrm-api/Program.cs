@@ -53,11 +53,25 @@ builder.Services.AddScoped<PayrollService>();
 var app = builder.Build();
 
 // Ensure Database is Created
-using (var scope = app.Services.CreateScope())
+app.Lifetime.ApplicationStarted.Register(async () =>
 {
-    var db = scope.ServiceProvider.GetRequiredService<HrmDbContext>();
-    db.Database.EnsureCreated();
-}
+    for (int i = 0; i < 5; i++)
+    {
+        try
+        {
+            using var scope = app.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<HrmDbContext>();
+            await db.Database.EnsureCreatedAsync();
+            app.Logger.LogInformation("HRM Database connected and verified successfully.");
+            break;
+        }
+        catch (Exception ex)
+        {
+            app.Logger.LogWarning("HRM DB initialization attempt {Attempt} failed: {Message}. Retrying...", i + 1, ex.Message);
+            await Task.Delay(2000);
+        }
+    }
+});
 
 app.UseCors();
 
@@ -284,4 +298,5 @@ public record ClockOutDto(int EmployeeId);
 public record SubmitLeaveDto(int EmployeeId, LeaveType LeaveType, DateTime StartDate, DateTime EndDate, string Reason);
 public record ApproveLeaveDto(string? ApprovedBy);
 public record ExecutePayrollDto(string? Period);
+
 
