@@ -6,6 +6,7 @@ using hrm_api.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("http://0.0.0.0:5060");
 
 // Add OpenApi
 builder.Services.AddOpenApi();
@@ -283,3 +284,4 @@ public record ClockOutDto(int EmployeeId);
 public record SubmitLeaveDto(int EmployeeId, LeaveType LeaveType, DateTime StartDate, DateTime EndDate, string Reason);
 public record ApproveLeaveDto(string? ApprovedBy);
 public record ExecutePayrollDto(string? Period);
+
