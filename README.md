@@ -27,6 +27,91 @@ flowchart TD
 
 ---
 
+## 🗄️ Database Design & Entity Relationships (PostgreSQL 18 + PostGIS)
+
+### 1. Entity-Relationship Diagram (ER Diagram)
+
+```mermaid
+erDiagram
+    Employees ||--o{ Attendances : "clocks attendance"
+    Employees ||--o{ Leaves : "applies for leave"
+    Employees ||--o{ Payrolls : "receives monthly salary"
+
+    Employees {
+        int Id PK
+        string EmployeeCode UK
+        string FullName
+        string Email UK
+        string Department
+        string Position
+        numeric BaseSalary
+        boolean IsActive
+        timestamp CreatedAt
+    }
+
+    Geofences {
+        int Id PK
+        string Name
+        double CenterLatitude
+        double CenterLongitude
+        double RadiusMeters
+    }
+
+    Attendances {
+        int Id PK
+        int EmployeeId FK
+        timestamp CheckInTime
+        timestamp CheckOutTime
+        double Latitude
+        double Longitude
+        boolean IsWithinGeofence
+        string SelfieBase64
+        string Status
+    }
+
+    Payrolls {
+        int Id PK
+        string PayrollCode UK
+        int EmployeeId FK
+        string PeriodMonth
+        numeric BaseSalary
+        numeric OvertimePay
+        numeric SocialSecurityDeduction
+        numeric WithholdingTax
+        numeric NetPay
+        boolean IsPaid
+        timestamp CreatedAt
+    }
+
+    Leaves {
+        int Id PK
+        int EmployeeId FK
+        string LeaveType
+        date StartDate
+        date EndDate
+        string Reason
+        string Status
+    }
+```
+
+### 2. รายละเอียดตารางและความสัมพันธ์ (Schema & Relationships)
+- **`Employees` (ข้อมูลพนักงาน)**:
+  - จัดเก็บรหัสพนักงาน (Unique), ชื่อ-นามสกุล, แผนก, ตำแหน่ง, และเงินเดือนฐาน (`BaseSalary`)
+  - ความสัมพันธ์: `1 Employee` มีหลาย `Attendances`, `Leaves`, และ `Payrolls`
+- **`Geofences` (พิกัดรั้วจำลองเชิงพื้นที่)**:
+  - บันทึกจุดกึ่งกลาง (Latitude, Longitude) และรัศมี (RadiusMeters) เพื่อให้ NetTopologySuite และ PostGIS ตรวจสอบ Point-in-Polygon
+- **`Attendances` (บันทึกเวลาเข้า-ออกงาน)**:
+  - Foreign Key: `EmployeeId` ➔ `Employees(Id)`
+  - บันทึกพิกัด GPS, รูปถ่าย Selfie ยืนยันตัวตน, สถานะ (`ON_TIME`, `LATE`, `ABSENT`), และผลการคำนวณ Geofence
+- **`Payrolls` (รายการประมวลผลเงินเดือน)**:
+  - Foreign Key: `EmployeeId` ➔ `Employees(Id)`
+  - บันทึกยอดเงินเดือน, ค่าล่วงเวลา, ยอดหักประกันสังคม (สูงสุด 750 บาท), ภาษีหัก ณ ที่จ่าย, และยอดสุทธิ (`NetPay`)
+- **`Leaves` (ประวัติการลา)**:
+  - Foreign Key: `EmployeeId` ➔ `Employees(Id)`
+  - ตารางนี้ทำงานร่วมกับ Invariant `NoOverlappingLeaves` ป้องกันการลาวันทับซ้อน
+
+---
+
 ## 🛡️ กฎเหล็กของระบบ (Domain Invariants)
 
 1. **`ClockInWithinGeofenceBoundaryOnly` (ลงเวลาได้เฉพาะภายในพื้นที่ที่กำหนดเท่านั้น)**:
@@ -40,6 +125,7 @@ flowchart TD
 
 | ส่วนประกอบ | เทคโนโลยีที่เลือก | เหตุผลที่เลือก | ข้อดีหลัก (Advantages) |
 |---|---|---|---|
+| **Database** | **PostgreSQL 18 + PostGIS** | รองรับการประมวลผล Spatial Data (พิกัดและเรขาคณิต) | มี Auto-Init Script (`db/init.sql`) พร้อมตาราง Geofence และ Seed Data |
 | **Frontend Map** | **Next.js 16 + react-leaflet** | แสดงแผนที่และขอบเขต Geofence ได้อย่างชัดเจนบนอุปกรณ์พกพา | พนักงานเห็นระยะห่างระหว่างจุดที่ยืนอยู่กับรั้วบริษัทได้ทันที |
 | **Face Verification**| **WebRTC Face Capture** | ดึงภาพจากกล้องหน้ามือถือแบบสดเพื่อยืนยันตัวตน | ป้องกันการลงเวลาแทนกัน (Buddy Punching) |
 | **Geospatial Engine** | **NetTopologySuite + PostGIS** | มาตรฐานการคำนวณพิกัดเชิงภูมิศาสตร์ระดับโลก (OpenGIS) | คำนวณ Point-in-Polygon ได้อย่างแม่นยำระดับเซนติเมตร และประมวลผลเร็วมาก |
@@ -49,6 +135,24 @@ flowchart TD
 
 ---
 
-## 🚀 สรุปสถาปัตยกรรม (Architecture Highlights)
+## 🚀 วิธีการรันระบบ (Quick Start)
 
-- **Geospatial & Payroll Precision**: รวมการคำนวณเชิงพิกัดจริงเข้ากับการคำนวณตัวเลขทางการเงินที่มีความแม่นยำสูง
+### ตัวเลือกที่ 1: รันด้วย Docker Compose (แนะนำ)
+```bash
+docker compose up --build -d
+```
+> ระบบจะรัน **PostGIS / PostgreSQL 18** (`:5432`), **.NET 10 API** (`:5060`), และ **Next.js 16 Web** (`:3006`) พร้อม Seed ข้อมูลพนักงานและ Geofence ทันที
+
+### ตัวเลือกที่ 2: รันแบบแยก Service (Manual)
+1. **รัน Backend API**:
+   ```powershell
+   cd hrm-api
+   dotnet run
+   ```
+   > API พร้อมทำงานที่: `http://localhost:5060`
+2. **รัน Frontend Web**:
+   ```powershell
+   cd hrm-web
+   bun run dev
+   ```
+   > เข้าใช้งานได้ที่: `http://localhost:3006`
