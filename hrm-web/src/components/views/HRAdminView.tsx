@@ -1,3 +1,4 @@
+import { showSuccess, showError, showInfo, showWarning, showConfirm } from '@/lib/swal';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -37,7 +38,7 @@ export default function HRAdminView() {
       await loadAllData();
       confetti({ particleCount: 50, spread: 60 });
     } catch (err: any) {
-      alert('Approval failed: ' + err.message);
+      showInfo('แจ้งเตือนระบบ', 'Approval failed: ' + err.message);
     }
   }
 
@@ -47,9 +48,9 @@ export default function HRAdminView() {
       const batch = await executePayroll(payrollPeriod);
       await loadAllData();
       confetti({ particleCount: 80, spread: 90, origin: { y: 0.6 } });
-      alert(`Payroll batch ${batch.batchPeriod} executed successfully for ${batch.employeeCount} employees! Total Net: ${batch.totalNet.toLocaleString()} THB`);
+      showInfo('แจ้งเตือนระบบ', `Payroll batch ${batch.batchPeriod} executed successfully for ${batch.employeeCount} employees! Total Net: ${batch.totalNet.toLocaleString()} THB`);
     } catch (err: any) {
-      alert('Payroll execution failed: ' + err.message);
+      showInfo('แจ้งเตือนระบบ', 'Payroll execution failed: ' + err.message);
     } finally {
       setIsExecutingPayroll(false);
     }
@@ -244,3 +245,4 @@ export default function HRAdminView() {
     </div>
   );
 }
+

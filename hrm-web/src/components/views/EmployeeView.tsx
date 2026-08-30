@@ -1,3 +1,4 @@
+import { showSuccess, showError, showInfo, showWarning, showConfirm } from '@/lib/swal';
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -89,11 +90,11 @@ export default function EmployeeView() {
         selfieImageBase64: selfieBase64 || undefined
       });
 
-      alert(res.message);
+      showInfo('แจ้งเตือนระบบ', res.message);
       await loadData();
       confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
     } catch (err: any) {
-      alert('Clock-In Rejected: ' + err.message);
+      showInfo('แจ้งเตือนระบบ', 'Clock-In Rejected: ' + err.message);
     } finally {
       setIsClocking(false);
     }
@@ -103,10 +104,10 @@ export default function EmployeeView() {
     if (!currentEmp) return;
     try {
       await clockOut(currentEmp.id);
-      alert('Clocked out successfully!');
+      showInfo('แจ้งเตือนระบบ', 'Clocked out successfully!');
       await loadData();
     } catch (err: any) {
-      alert('Clock-out failed: ' + err.message);
+      showInfo('แจ้งเตือนระบบ', 'Clock-out failed: ' + err.message);
     }
   }
 
@@ -123,11 +124,11 @@ export default function EmployeeView() {
         reason
       });
 
-      alert('Leave request submitted successfully for manager approval!');
+      showInfo('แจ้งเตือนระบบ', 'Leave request submitted successfully for manager approval!');
       await loadData();
       confetti({ particleCount: 40, spread: 50 });
     } catch (err: any) {
-      alert('Leave submission rejected: ' + err.message);
+      showInfo('แจ้งเตือนระบบ', 'Leave submission rejected: ' + err.message);
     } finally {
       setIsSubmittingLeave(false);
     }
@@ -370,3 +371,4 @@ export default function EmployeeView() {
     </div>
   );
 }
+
