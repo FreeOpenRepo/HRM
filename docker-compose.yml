@@ -1,0 +1,33 @@
+services:
+  hrm-api:
+    build:
+      context: ./hrm-api
+      dockerfile: Dockerfile
+    container_name: hrm-api
+    ports:
+      - "5060:5060"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5060
+    restart: unless-stopped
+    networks:
+      - hrm-network
+
+  hrm-web:
+    build:
+      context: ./hrm-web
+      dockerfile: Dockerfile
+    container_name: hrm-web
+    ports:
+      - "3006:3006"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5060
+    depends_on:
+      - hrm-api
+    restart: unless-stopped
+    networks:
+      - hrm-network
+
+networks:
+  hrm-network:
+    driver: bridge
