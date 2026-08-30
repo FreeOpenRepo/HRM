@@ -1,4 +1,4 @@
-import { showSuccess, showError, showInfo, showWarning, showConfirm } from '@/lib/swal';
+import { showSuccess, showError, showInfo, showWarning, showยืนยัน } from '@/lib/swal';
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -177,16 +177,16 @@ export default function EmployeeView() {
               Geofenced Attendance Clock-In
             </h2>
 
-            {/* Status Banner */}
+            {/* สถานะ Banner */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderRadius: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border-glass)', marginBottom: '16px' }}>
               <div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Current Status:</div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 800, color: currentEmp.attendanceStatus === 'CLOCKED_IN' ? 'var(--accent-emerald)' : 'var(--text-muted)' }}>
-                  {currentEmp.attendanceStatus}
+                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Current สถานะ:</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 800, color: currentEmp.attendanceสถานะ === 'CLOCKED_IN' ? 'var(--accent-emerald)' : 'var(--text-muted)' }}>
+                  {currentEmp.attendanceสถานะ}
                 </div>
               </div>
-              <span className={`badge-${currentEmp.attendanceStatus.toLowerCase()}`} style={{ padding: '4px 10px', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 700 }}>
-                {currentEmp.attendanceStatus}
+              <span className={`badge-${currentEmp.attendanceสถานะ.toLowerCase()}`} style={{ padding: '4px 10px', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 700 }}>
+                {currentEmp.attendanceสถานะ}
               </span>
             </div>
 
@@ -266,7 +266,7 @@ export default function EmployeeView() {
             <div style={{ display: 'flex', gap: '12px', marginTop: 'auto' }}>
               <button
                 onClick={handleClockIn}
-                disabled={isClocking || currentEmp.attendanceStatus === 'CLOCKED_IN'}
+                disabled={isClocking || currentEmp.attendanceสถานะ === 'CLOCKED_IN'}
                 className="btn-success"
                 style={{ flex: 1, padding: '12px', fontSize: '0.95rem' }}
               >
@@ -275,7 +275,7 @@ export default function EmployeeView() {
               </button>
               <button
                 onClick={handleClockOut}
-                disabled={currentEmp.attendanceStatus !== 'CLOCKED_IN'}
+                disabled={currentEmp.attendanceสถานะ !== 'CLOCKED_IN'}
                 className="btn-secondary"
                 style={{ padding: '12px 18px', fontSize: '0.95rem' }}
               >
@@ -371,4 +371,5 @@ export default function EmployeeView() {
     </div>
   );
 }
+
 

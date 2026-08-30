@@ -1,4 +1,4 @@
-import { showSuccess, showError, showInfo, showWarning, showConfirm } from '@/lib/swal';
+import { showSuccess, showError, showInfo, showWarning, showยืนยัน } from '@/lib/swal';
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -48,7 +48,7 @@ export default function HRAdminView() {
       const batch = await executePayroll(payrollPeriod);
       await loadAllData();
       confetti({ particleCount: 80, spread: 90, origin: { y: 0.6 } });
-      showInfo('แจ้งเตือนระบบ', `Payroll batch ${batch.batchPeriod} executed successfully for ${batch.employeeCount} employees! Total Net: ${batch.totalNet.toLocaleString()} THB`);
+      showInfo('แจ้งเตือนระบบ', `Payroll batch ${batch.batchPeriod} executed successfully for ${batch.employeeCount} employees! ยอดรวม Net: ${batch.totalNet.toLocaleString()} THB`);
     } catch (err: any) {
       showInfo('แจ้งเตือนระบบ', 'Payroll execution failed: ' + err.message);
     } finally {
@@ -148,7 +148,7 @@ export default function HRAdminView() {
                       <img src={att.selfieImageBase64} alt="Selfie" style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover' }} />
                     )}
                     <span style={{ fontSize: '0.75rem', fontWeight: 700, color: att.isWithinGeofence ? '#34d399' : '#fda4af' }}>
-                      {att.verificationStatus}
+                      {att.verificationสถานะ}
                     </span>
                   </div>
                 </div>
@@ -197,11 +197,11 @@ export default function HRAdminView() {
               <tr style={{ borderBottom: '1px solid var(--border-glass)', color: 'var(--text-muted)', textAlign: 'left' }}>
                 <th style={{ padding: '10px 12px' }}>Period</th>
                 <th style={{ padding: '10px 12px' }}>Employees</th>
-                <th style={{ padding: '10px 12px' }}>Total Gross</th>
-                <th style={{ padding: '10px 12px' }}>Total SSF (5%)</th>
-                <th style={{ padding: '10px 12px' }}>Total Tax (PND1)</th>
-                <th style={{ padding: '10px 12px' }}>Total Net Transfer</th>
-                <th style={{ padding: '10px 12px' }}>Actions & Artifacts</th>
+                <th style={{ padding: '10px 12px' }}>ยอดรวม Gross</th>
+                <th style={{ padding: '10px 12px' }}>ยอดรวม SSF (5%)</th>
+                <th style={{ padding: '10px 12px' }}>ยอดรวม Tax (PND1)</th>
+                <th style={{ padding: '10px 12px' }}>ยอดรวม Net Transfer</th>
+                <th style={{ padding: '10px 12px' }}>การดำเนินการ & Artifacts</th>
               </tr>
             </thead>
             <tbody>
@@ -245,4 +245,5 @@ export default function HRAdminView() {
     </div>
   );
 }
+
 

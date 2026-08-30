@@ -122,7 +122,7 @@ export default function Home() {
             color: isApiOnline ? '#34d399' : '#fca5a5'
           }}>
             {isApiOnline ? <Wifi style={{ width: 12, height: 12 }} /> : <WifiOff style={{ width: 12, height: 12 }} />}
-            <span>{isApiOnline ? 'HRM API Active' : 'Connecting API :5060...'}</span>
+            <span>{isApiOnline ? 'HRM API ออนไลน์' : 'Connecting API :5060...'}</span>
           </div>
         </div>
       </header>
@@ -136,3 +136,4 @@ export default function Home() {
     </main>
   );
 }
+
