@@ -30,7 +30,8 @@ services:
       - "5060:5060"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:5060
+      - ASPNETCORE_URLS=http://0.0.0.0:5060
+      - ASPNETCORE_HTTP_PORTS=5060
       - ConnectionStrings__PostgresConnection=Host=hrm-db;Port=5432;Database=hrm_db;Username=postgres;Password=postgres
     depends_on:
       hrm-db:
@@ -60,6 +61,7 @@ volumes:
 networks:
   hrm-network:
     driver: bridge
+
 
 
 

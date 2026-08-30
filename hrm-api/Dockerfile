@@ -12,6 +12,8 @@ RUN dotnet publish "hrm-api.csproj" -c Release -o /app/publish /p:UseAppHost=fal
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-ENV ASPNETCORE_URLS=http://+:5060
+ENV ASPNETCORE_URLS=http://0.0.0.0:5060
+ENV ASPNETCORE_HTTP_PORTS=5060
 EXPOSE 5060
 ENTRYPOINT ["dotnet", "hrm-api.dll"]
+
